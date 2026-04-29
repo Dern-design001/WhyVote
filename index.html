@@ -9,6 +9,10 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="firebase-config.js"></script>
 </head>
 <body class="text-slate-800">
 
@@ -19,25 +23,37 @@
                 <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
             </div>
             <h1 class="text-3xl font-black text-slate-900 mb-2 text-balance">WhyVote India</h1>
-            <p class="text-slate-500 mb-10">Select your preferred language to begin</p>
+            <p id="login-status-msg" class="text-slate-500 mb-6">Secure login to access personalized election info</p>
             
-            <div class="grid grid-cols-1 gap-3">
-                <button onclick="login('english')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
-                    <span>English</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+            <!-- Google Login Button -->
+            <div id="auth-section" class="mb-8">
+                <button onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-3 p-4 bg-white border border-slate-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all font-bold shadow-sm">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
+                    <span>Continue with Google</span>
                 </button>
-                <button onclick="login('hindi')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
-                    <span>हिन्दी (Hindi)</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
-                </button>
-                <button onclick="login('tamil')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
-                    <span>தமிழ் (Tamil)</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
-                </button>
-                <button onclick="login('malayalam')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
-                    <span>മലയാളം (Malayalam)</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
-                </button>
+            </div>
+
+            <!-- Language Section (Hidden until login) -->
+            <div id="language-section" class="hidden">
+                <p class="text-slate-500 mb-6">Select your preferred language to begin</p>
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="selectLanguage('english')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                        <span>English</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                    </button>
+                    <button onclick="selectLanguage('hindi')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                        <span>हिन्दी (Hindi)</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                    </button>
+                    <button onclick="selectLanguage('tamil')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                        <span>தமிழ் (Tamil)</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                    </button>
+                    <button onclick="selectLanguage('malayalam')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                        <span>മലയാളം (Malayalam)</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                    </button>
+                </div>
             </div>
             <p class="mt-8 text-xs text-slate-400 font-medium">Empowering Indian Citizens • 2026</p>
         </div>
@@ -120,10 +136,15 @@
                 </div>
                 <span class="text-xl font-bold tracking-tight">WhyVote India</span>
             </div>
-            <button onclick="toggleSupport()" class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-100 hover:bg-orange-700 transition">
-                <i data-lucide="phone" class="w-4 h-4"></i>
-                <span id="nav-helpline-btn">Helpline 1950</span>
-            </button>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSupport()" class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-100 hover:bg-orange-700 transition">
+                    <i data-lucide="phone" class="w-4 h-4"></i>
+                    <span id="nav-helpline-btn">Helpline 1950</span>
+                </button>
+                <button id="logout-btn" onclick="signOutUser()" class="hidden p-2 text-slate-400 hover:text-red-500 transition" title="Logout">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
