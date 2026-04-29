@@ -50,8 +50,8 @@ const commonQuestions = [
 "How do I register as a new voter in India?","What is Form 6 and when is it used?","How to track my Voter ID application status?","What is the deadline for registration before an election?","How to fill Form 8 for correction of details?","What is Form 7 and who should fill it?","What is an EPIC number and where can I find it?","I lost my Voter ID card. How do I get a duplicate one?","How can I download my e-EPIC (digital voter card)?","Can I have more than one Voter ID card?","What IDs are valid for voting if I don't have a physical Voter ID?","Can I use my Aadhaar card as ID to vote?","What is the minimum age to be eligible to vote?","Can NRIs (Non-Resident Indians) vote?","Can a non-citizen of India vote?","How do I find my assigned polling booth?","What are the standard voting hours on polling day?","What is the process inside the polling station?","What is the 'Indelible Ink' and why is it used?","What is an EVM and how does it work?","What is VVPAT and how does it verify my vote?","How do I confirm my vote went to the right candidate on the EVM?","What happens if the EVM malfunctions during voting?","What is NOTA (None Of The Above)?","How can government employees on election duty vote?","What is a 'Tendered Vote'?","What is a 'Challenged Vote'?","Is there a facility for senior citizens to vote from home?","How are the votes counted and results declared?","Where can I find real-time results on counting day?"
 ];
 
-const translations = {
-english: {
+window.translations = window.translations || {};
+translations.english = {
 heroTitle: "Every Vote <span class='text-[#FF9933]'>Counts.</span>",
 heroDesc: "Understanding the world's largest democratic exercise. Follow our roadmap or chat with our assistant for ECI guidelines.",
 roadmapTitle: "The Indian Election Journey",
@@ -64,7 +64,6 @@ botGreeting: "Namaste! I'm your Indian Election Assistant. How can I help you to
 helplineBtn: "Helpline 1950",
 helpModal: {title:"Election Helpline",subtitle:"Official ECI Contact Information",natTitle:"National Voter Helpline",natDesc:"Toll-free. Established by the Election Commission of India (ECI) for queries, registration status, and grievances.",natTip:"<strong>Tip:</strong> If calling from a mobile, prefix with your state capital STD code (e.g., <strong>044-1950</strong> for Tamil Nadu).",contactTitle:"Contact Centre",contactDesc:"Daily 8:00 AM - 8:00 PM Multi-language support",localTitle:"Local Support (Chennai)",localDesc:"District Election Control Room Toll-Free",digitalTitle:"Digital Self-Service",voterApp:"Voter Helpline App",footer:"Ready for 2026 Tamil Nadu Legislative Assembly Election"},
 faqLabels: commonQuestions
-}
 };
 
 function toggleSupport() {
