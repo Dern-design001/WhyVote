@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhyVote | Indian Election Guide</title>
+    <meta name="description" content="WhyVote India - Your comprehensive guide to the Indian democratic process. Get election information, voter registration help, and ECI guidelines in multiple languages.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="text-slate-800">
+
+    <!-- Language / Login Overlay -->
+    <div id="login-overlay">
+        <div class="max-w-md w-full px-8 text-center animate-slide-up">
+            <div class="bg-[#000080] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <i data-lucide="fingerprint" class="text-white w-8 h-8"></i>
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 mb-2 text-balance">WhyVote India</h1>
+            <p class="text-slate-500 mb-10">Select your preferred language to begin</p>
+            
+            <div class="grid grid-cols-1 gap-3">
+                <button onclick="login('english')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                    <span>English</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                </button>
+                <button onclick="login('hindi')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                    <span>हिन्दी (Hindi)</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                </button>
+                <button onclick="login('tamil')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                    <span>தமிழ் (Tamil)</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                </button>
+                <button onclick="login('malayalam')" class="group flex items-center justify-between p-5 rounded-2xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50 transition-all font-bold">
+                    <span>മലയാളം (Malayalam)</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300 group-hover:text-orange-500"></i>
+                </button>
+            </div>
+            <p class="mt-8 text-xs text-slate-400 font-medium">Empowering Indian Citizens • 2026</p>
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="support-modal">
+        <div class="max-w-2xl w-full bg-white rounded-[2.5rem] shadow-2xl p-8 m-4 relative animate-slide-up overflow-y-auto max-h-[90vh]">
+            <button onclick="toggleSupport()" class="absolute top-6 right-6 p-2 hover:bg-slate-100 rounded-full transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="bg-orange-100 p-3 rounded-2xl">
+                    <i data-lucide="phone-call" class="text-orange-600 w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 id="support-modal-title" class="text-2xl font-black">Election Helpline</h2>
+                    <p id="support-modal-subtitle" class="text-sm text-slate-500">Official ECI Contact Information</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100">
+                    <h3 id="nat-helpline-title" class="font-bold text-orange-900 mb-2 flex items-center gap-2">
+                        <i data-lucide="phone" class="w-4 h-4"></i> National Voter Helpline
+                    </h3>
+                    <p class="text-3xl font-black text-orange-600 mb-2">1950</p>
+                    <p id="nat-helpline-desc" class="text-xs text-orange-800 leading-relaxed">
+                        Toll-free. Established by the Election Commission of India (ECI) for queries, registration status, and grievances.
+                    </p>
+                    <div id="nat-helpline-tip" class="mt-4 p-3 bg-white/50 rounded-xl text-xs text-orange-900 border border-orange-100/50">
+                        <strong>Tip:</strong> If calling from a mobile, prefix with your state's capital STD code (e.g., <strong>044-1950</strong> for Tamil Nadu).
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <h4 id="contact-centre-title" class="text-xs font-bold text-slate-400 uppercase mb-2">Contact Centre</h4>
+                        <p class="font-bold text-slate-800">1800-11-1950</p>
+                        <p id="contact-centre-desc" class="text-[10px] text-slate-500 mt-1">Daily 8:00 AM - 8:00 PM • Multi-language support</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                        <h4 id="local-support-title" class="text-xs font-bold text-slate-400 uppercase mb-2">Local Support (Chennai)</h4>
+                        <p class="font-bold text-slate-800">1800-425-0086</p>
+                        <p id="local-support-desc" class="text-[10px] text-slate-500 mt-1">District Election Control Room • Toll-Free</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <h4 id="digital-service-title" class="text-xs font-bold text-slate-400 uppercase">Digital Self-Service</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <a href="https://voters.eci.gov.in" target="_blank" class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-orange-300 transition group">
+                            <i data-lucide="globe" class="w-5 h-5 text-slate-400 group-hover:text-orange-500"></i>
+                            <span class="text-sm font-bold">voters.eci.gov.in</span>
+                        </a>
+                        <div class="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
+                            <i data-lucide="smartphone" class="w-5 h-5 text-slate-400"></i>
+                            <span id="voter-app-label" class="text-sm font-bold">Voter Helpline App</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p id="support-footer" class="mt-8 text-center text-[10px] text-slate-400 font-medium tracking-wide">Ready for 2026 Tamil Nadu Legislative Assembly Election</p>
+        </div>
+    </div>
+
+    <div class="bg-container">
+        <div class="star-pattern"></div>
+        <div class="bg-blob blob-orange"></div>
+        <div class="bg-blob blob-green"></div>
+        <div class="bg-blob blob-white"></div>
+    </div>
+
+    <nav class="bg-white/70 backdrop-blur-md sticky top-0 z-50 border-b border-slate-100 px-6 py-4">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="bg-[#000080] p-1.5 rounded-lg shadow-lg">
+                    <i data-lucide="fingerprint" class="text-white w-5 h-5"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight">WhyVote India</span>
+            </div>
+            <button onclick="toggleSupport()" class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-full text-sm font-bold shadow-lg shadow-orange-100 hover:bg-orange-700 transition">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+                <span id="nav-helpline-btn">Helpline 1950</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-12 relative z-10">
+        <header class="text-center mb-16 animate-slide-up">
+            <h1 id="hero-title" class="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight text-balance">
+                Every Vote <span class="text-[#FF9933]">Counts.</span>
+            </h1>
+            <p id="hero-desc" class="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                Understanding the world's largest democratic exercise. Select a common question or follow our roadmap to be election-ready.
+            </p>
+        </header>
+
+        <section class="mb-20">
+            <h2 id="roadmap-title" class="text-xs font-black text-orange-600 uppercase tracking-[0.2em] mb-8 text-center">The Indian Election Journey</h2>
+            <div id="roadmap-grid" class="grid grid-cols-1 sm:grid-cols-5 gap-4"></div>
+        </section>
+
+        <section class="max-w-2xl mx-auto">
+            <div class="glass-panel rounded-[2.5rem] border border-white shadow-2xl overflow-hidden flex flex-col min-h-[550px]">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-100">
+                            <i data-lucide="sparkles" class="text-white w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 id="assistant-name" class="font-bold text-slate-800">Civic Assistant India</h3>
+                            <p id="assistant-status" class="text-[10px] text-emerald-500 font-bold uppercase tracking-wider">Online & Verified</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="chat-messages" class="flex-1 p-6 space-y-6 overflow-y-auto max-h-[350px] bg-slate-50/5"></div>
+
+                <div class="p-6 bg-white border-t border-slate-50">
+                    <div class="mb-4">
+                        <label id="faq-label" for="faq-select" class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">30 Common Questions (ECI Guidelines)</label>
+                        <select id="faq-select" onchange="askFaq()" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-orange-100 outline-none text-slate-600 appearance-none cursor-pointer">
+                        </select>
+                    </div>
+
+                    <div class="relative flex items-center">
+                        <input id="ai-input" type="text" placeholder="..." 
+                               class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-6 py-4 text-sm font-medium focus:ring-4 focus:ring-orange-100 outline-none transition-all pr-14">
+                        <button onclick="sendMessage()" class="absolute right-2 p-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 transition shadow-md shadow-orange-100">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script src="translations.js"></script>
+</body>
+</html>
