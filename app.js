@@ -117,17 +117,37 @@ function applyLanguage() {
     lucide.createIcons();
 }
 
+const localAnswers = {
+    "How do I register as a new voter in India?": "You can register online via the Voters Service Portal (voters.eci.gov.in) or the Voter Helpline App. You need to fill Form 6 and provide proof of age and residence. 📝",
+    "What is Form 6 and when is it used?": "Form 6 is the application form for 'New Voter Registration'. Use it if you are 18+ and want to vote for the first time, or if you have moved to a new constituency. 🏠",
+    "How to track my Voter ID application status?": "Visit voters.eci.gov.in and click on 'Track Application Status'. You will need the Reference ID provided to you when you submitted Form 6. 🔍",
+    "What is an EPIC number and where can I find it?": "EPIC stands for Electoral Photo Identity Card. Your EPIC number is the unique 10-digit alphanumeric code printed on the front of your Voter ID card. 🆔",
+    "What IDs are valid for voting if I don't have a physical Voter ID?": "You can use any of these 12 alternatives: Aadhaar Card, MGNREGA Job Card, Passbooks with photo (Bank/Post Office), Health Insurance Smart Card (Ministry of Labour), Driving License, PAN Card, Smart Card (RGI under NPR), Indian Passport, Pension document with photo, Service ID cards (Central/State/PSU), Official ID cards (MPs/MLAs/MLCs), and Unique Disability ID (UDID) Card. 🪪",
+    "Can I use my Aadhaar card as ID to vote?": "Yes! Aadhaar Card is one of the 12 approved alternative photo identity documents accepted at polling stations if you don't have your physical Voter ID. 💳",
+    "What is an EVM and how does it work?": "An Electronic Voting Machine (EVM) records your vote digitally. It has two parts: a Control Unit (with the officer) and a Balloting Unit (in the booth). It is secure and tamper-proof. 🗳️",
+    "What is VVPAT and how does it verify my vote?": "VVPAT is a printer-like device next to the EVM. It shows a paper slip for 7 seconds showing the candidate you voted for, verifying your choice before it drops into a sealed box. ✅",
+    "What is NOTA (None Of The Above)?": "NOTA is an option on the EVM that allows you to register that you do not support any of the candidates in the fray. It is the last button on the machine. 🚫",
+    "Is there a facility for senior citizens to vote from home?": "Yes, the ECI provides a 'Postal Ballot' facility for voters aged 85+ and Persons with Disabilities (PwD) to vote from home. You must apply using Form 12D. 🏡",
+    "How do I find my assigned polling booth?": "You can find your booth by searching your name on the 'Voter Search' portal (electoralsearch.eci.gov.in) or by sending an SMS 'ECI <EPIC No>' to 1950. 📍"
+};
+
 async function callGemini(prompt) {
+    if (!apiKey) throw new Error("API_KEY_MISSING");
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODEL_NAME + ':generateContent?key=' + apiKey;
     const systemInst = 'You are WhyVote India. Answer in ' + currentLang.toUpperCase() + '. Break down Indian voting (Form 6, EPIC, EVM/VVPAT, ECI) clearly. Verify on voters.eci.gov.in. Use emojis. If user asks about contact, mention Helpline 1950.';
     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
     try {
         const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: chatHistory, systemInstruction: { parts: [{ text: systemInst }] } }) });
         const result = await response.json();
-        const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text || "...";
+        if (result.error) throw new Error(result.error.message);
+        const aiText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!aiText) throw new Error("NO_RESPONSE_FROM_AI");
         chatHistory.push({ role: "model", parts: [{ text: aiText }] });
         return aiText;
-    } catch (e) { return "I'm sorry, I'm having trouble connecting."; }
+    } catch (e) { 
+        console.error("Gemini Error:", e);
+        throw e;
+    }
 }
 
 function askFaq() {
@@ -151,18 +171,6 @@ function addUserMessage(text) {
     c.appendChild(m); c.scrollTop = c.scrollHeight;
 }
 
-const localAnswers = {
-    "How do I register as a new voter in India?": "You can register online via the Voters Service Portal (voters.eci.gov.in) or the Voter Helpline App. You need to fill Form 6 and provide proof of age and residence. 📝",
-    "What is Form 6 and when is it used?": "Form 6 is the application form for 'New Voter Registration'. Use it if you are 18+ and want to vote for the first time, or if you have moved to a new constituency. 🏠",
-    "How to track my Voter ID application status?": "Visit voters.eci.gov.in and click on 'Track Application Status'. You will need the Reference ID provided to you when you submitted Form 6. 🔍",
-    "What is an EPIC number and where can I find it?": "EPIC stands for Electoral Photo Identity Card. Your EPIC number is the unique 10-digit alphanumeric code printed on the front of your Voter ID card. 🆔",
-    "What is an EVM and how does it work?": "An Electronic Voting Machine (EVM) records your vote digitally. It has two parts: a Control Unit (with the officer) and a Balloting Unit (in the booth). It is secure and tamper-proof. 🗳️",
-    "What is VVPAT and how does it verify my vote?": "VVPAT is a printer-like device next to the EVM. It shows a paper slip for 7 seconds showing the candidate you voted for, verifying your choice before it drops into a sealed box. ✅",
-    "What is NOTA (None Of The Above)?": "NOTA is an option on the EVM that allows you to register that you do not support any of the candidates in the fray. It is the last button on the machine. 🚫",
-    "Is there a facility for senior citizens to vote from home?": "Yes, the ECI provides a 'Postal Ballot' facility for voters aged 85+ and Persons with Disabilities (PwD) to vote from home. You must apply using Form 12D. 🏡",
-    "How do I find my assigned polling booth?": "You can find your booth by searching your name on the 'Voter Search' portal (electoralsearch.eci.gov.in) or by sending an SMS 'ECI <EPIC No>' to 1950. 📍"
-};
-
 async function sendMessage(overrideText) {
     overrideText = overrideText || null;
     const input = document.getElementById('ai-input');
@@ -185,7 +193,11 @@ async function sendMessage(overrideText) {
         const resp = await callGemini(text); 
         addBotMessage(resp); 
     } catch (e) { 
-        addBotMessage("I'm currently in guest mode. For AI-powered answers, please ensure the API key is configured. In the meantime, you can select questions from the FAQ dropdown! 🇮🇳"); 
+        let errorMsg = "I'm currently in guest mode. For AI-powered answers, please ensure the API key is configured. In the meantime, you can select questions from the FAQ dropdown! 🇮🇳";
+        if (e.message !== "API_KEY_MISSING") {
+            errorMsg = "I'm having trouble connecting to the AI. Please try again or use the FAQ dropdown below! 🌐";
+        }
+        addBotMessage(errorMsg); 
     } finally { 
         isTyping = false; 
     }
