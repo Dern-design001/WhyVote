@@ -8,8 +8,11 @@ let isTyping = false;
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-// Global translations object
+// Global objects
 window.translations = window.translations || {};
+window.commonQuestions = [
+"How do I register as a new voter in India?","What is Form 6 and when is it used?","How to track my Voter ID application status?","What is the deadline for registration before an election?","How to fill Form 8 for correction of details?","What is Form 7 and who should fill it?","What is an EPIC number and where can I find it?","I lost my Voter ID card. How do I get a duplicate one?","How can I download my e-EPIC (digital voter card)?","Can I have more than one Voter ID card?","What IDs are valid for voting if I don't have a physical Voter ID?","Can I use my Aadhaar card as ID to vote?","What is the minimum age to be eligible to vote?","Can NRIs (Non-Resident Indians) vote?","Can a non-citizen of India vote?","How do I find my assigned polling booth?","What are the standard voting hours on polling day?","What is the process inside the polling station?","What is the 'Indelible Ink' and why is it used?","What is an EVM and how does it work?","What is VVPAT and how does it verify my vote?","How do I confirm my vote went to the right candidate on the EVM?","What happens if the EVM malfunctions during voting?","What is NOTA (None Of The Above)?","How can government employees on election duty vote?","What is a 'Tendered Vote'?","What is a 'Challenged Vote'?","Is there a facility for senior citizens to vote from home?","How are the votes counted and results declared?","Where can I find real-time results on counting day?"
+];
 
 // Auth State Listener
 auth.onAuthStateChanged(user => {
@@ -49,10 +52,6 @@ function skipLogin() {
     document.getElementById('login-status-msg').innerText = "Browsing as Guest. Select a language.";
 }
 
-const commonQuestions = [
-"How do I register as a new voter in India?","What is Form 6 and when is it used?","How to track my Voter ID application status?","What is the deadline for registration before an election?","How to fill Form 8 for correction of details?","What is Form 7 and who should fill it?","What is an EPIC number and where can I find it?","I lost my Voter ID card. How do I get a duplicate one?","How can I download my e-EPIC (digital voter card)?","Can I have more than one Voter ID card?","What IDs are valid for voting if I don't have a physical Voter ID?","Can I use my Aadhaar card as ID to vote?","What is the minimum age to be eligible to vote?","Can NRIs (Non-Resident Indians) vote?","Can a non-citizen of India vote?","How do I find my assigned polling booth?","What are the standard voting hours on polling day?","What is the process inside the polling station?","What is the 'Indelible Ink' and why is it used?","What is an EVM and how does it work?","What is VVPAT and how does it verify my vote?","How do I confirm my vote went to the right candidate on the EVM?","What happens if the EVM malfunctions during voting?","What is NOTA (None Of The Above)?","How can government employees on election duty vote?","What is a 'Tendered Vote'?","What is a 'Challenged Vote'?","Is there a facility for senior citizens to vote from home?","How are the votes counted and results declared?","Where can I find real-time results on counting day?"
-];
-
 translations.english = {
 heroTitle: "Every Vote <span class='text-[#FF9933]'>Counts.</span>",
 heroDesc: "Understanding the world's largest democratic exercise. Follow our roadmap or chat with our assistant for ECI guidelines.",
@@ -65,12 +64,11 @@ inputPlaceholder: "Ask about EVMs, Voter IDs, or registration...",
 botGreeting: "Namaste! I'm your Indian Election Assistant. How can I help you today?",
 helplineBtn: "Helpline 1950",
 helpModal: {title:"Election Helpline",subtitle:"Official ECI Contact Information",natTitle:"National Voter Helpline",natDesc:"Toll-free. Established by the Election Commission of India (ECI) for queries, registration status, and grievances.",natTip:"<strong>Tip:</strong> If calling from a mobile, prefix with your state capital STD code (e.g., <strong>044-1950</strong> for Tamil Nadu).",contactTitle:"Contact Centre",contactDesc:"Daily 8:00 AM - 8:00 PM Multi-language support",localTitle:"Local Support (Chennai)",localDesc:"District Election Control Room Toll-Free",digitalTitle:"Digital Self-Service",voterApp:"Voter Helpline App",footer:"Ready for 2026 Tamil Nadu Legislative Assembly Election"},
-faqLabels: commonQuestions,
+faqLabels: window.commonQuestions,
 guestError: "I'm currently in guest mode. For AI-powered answers, please ensure the API key is configured. In the meantime, you can select questions from the FAQ dropdown! 🇮🇳",
 apiError: "I'm having trouble connecting to the AI. Please try again or use the FAQ dropdown below! 🌐"
 };
 
-// Add localized errors to other languages
 translations.hindi.guestError = "मैं अभी गेस्ट मोड में हूं। एआई-संचालित उत्तरों के लिए, कृपया सुनिश्चित करें कि एपीआई कुंजी कॉन्फ़िगर की गई है। इस बीच, आप नीचे दिए गए ड्रॉपडाउन से प्रश्न चुन सकते हैं! 🇮🇳";
 translations.hindi.apiError = "मुझे एआई से जुड़ने में समस्या हो रही है। कृपया पुनः प्रयास करें या नीचे दिए गए ड्रॉपडाउन का उपयोग करें! 🌐";
 translations.tamil.guestError = "நான் தற்போது விருந்தினர் முறையில் உள்ளேன். AI பதில்களுக்கு, API விசை உள்ளமைக்கப்பட்டுள்ளதை உறுதிப்படுத்தவும். இதற்கிடையில், நீங்கள் FAQ டிராப்டவுனில் இருந்து கேள்விகளைத் தேர்ந்தெடுக்கலாம்! 🇮🇳";
@@ -119,12 +117,12 @@ function applyLanguage() {
     const grid = document.getElementById('roadmap-grid');
     const icons = ['user-plus','search','calendar','fingerprint','flag'];
     grid.innerHTML = t.phases.map((name, i) => {
-        const question = commonQuestions[i * 6].replace(/'/g, "\\'");
+        const question = window.commonQuestions[i * 6].replace(/'/g, "\\'");
         return '<div onclick="sendMessage(\'' + question + '\')" class="roadmap-card p-6 rounded-[2rem] text-center flex flex-col items-center cursor-pointer"><div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-4"><i data-lucide="' + icons[i] + '" class="w-6 h-6"></i></div><span class="text-[10px] font-bold text-slate-400 uppercase mb-1">Phase ' + (i+1) + '</span><h3 class="text-sm font-bold">' + name + '</h3></div>';
     }).join('');
 
     const faqSelect = document.getElementById('faq-select');
-    faqSelect.innerHTML = '<option value="">Select a question...</option>' + t.faqLabels.map((label, i) => '<option value="' + commonQuestions[i] + '">' + label + '</option>').join('');
+    faqSelect.innerHTML = '<option value="">Select a question...</option>' + t.faqLabels.map((label, i) => '<option value="' + window.commonQuestions[i] + '">' + label + '</option>').join('');
     lucide.createIcons();
 }
 
@@ -177,7 +175,7 @@ async function sendMessage(overrideText) {
 
     // Localized USER bubble
     if (currentLang !== 'english') {
-        const engIdx = commonQuestions.indexOf(text);
+        const engIdx = window.commonQuestions.indexOf(text);
         if (engIdx !== -1) {
             const transQ = translations[currentLang]?.faqLabels?.[engIdx];
             if (transQ) text = transQ; 
@@ -192,12 +190,13 @@ async function sendMessage(overrideText) {
     if (window.FAQ_ANSWERS && FAQ_ANSWERS[currentLang]) {
         localAns = FAQ_ANSWERS[currentLang][text];
         
-        // Fallback: If text was originally English, check English KB
+        // Fallback: If text was originally English (from roadmap), check English KB then translate
         if (!localAns && overrideText) {
-             const engIdx = commonQuestions.indexOf(overrideText);
+             const engIdx = window.commonQuestions.indexOf(overrideText);
              if (engIdx !== -1) {
                  const transQ = translations[currentLang]?.faqLabels?.[engIdx];
-                 localAns = FAQ_ANSWERS[currentLang][transQ];
+                 if (transQ) localAns = FAQ_ANSWERS[currentLang][transQ];
+                 if (!localAns) localAns = FAQ_ANSWERS.english[window.commonQuestions[engIdx]];
              }
         }
     }
