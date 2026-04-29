@@ -27,9 +27,12 @@
             
             <!-- Google Login Button -->
             <div id="auth-section" class="mb-8">
-                <button onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-3 p-4 bg-white border border-slate-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all font-bold shadow-sm">
+                <button onclick="signInWithGoogle()" class="w-full flex items-center justify-center gap-3 p-4 bg-white border border-slate-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all font-bold shadow-sm mb-3">
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google Logo">
                     <span>Continue with Google</span>
+                </button>
+                <button onclick="skipLogin()" class="text-xs text-slate-400 hover:text-slate-600 font-bold uppercase tracking-widest transition-colors">
+                    Skip / Browse as Guest
                 </button>
             </div>
 

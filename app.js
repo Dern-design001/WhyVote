@@ -40,6 +40,12 @@ function signOutUser() {
     auth.signOut();
 }
 
+function skipLogin() {
+    document.getElementById('auth-section').classList.add('hidden');
+    document.getElementById('language-section').classList.remove('hidden');
+    document.getElementById('login-status-msg').innerText = "Browsing as Guest. Select a language.";
+}
+
 const commonQuestions = [
 "How do I register as a new voter in India?","What is Form 6 and when is it used?","How to track my Voter ID application status?","What is the deadline for registration before an election?","How to fill Form 8 for correction of details?","What is Form 7 and who should fill it?","What is an EPIC number and where can I find it?","I lost my Voter ID card. How do I get a duplicate one?","How can I download my e-EPIC (digital voter card)?","Can I have more than one Voter ID card?","What IDs are valid for voting if I don't have a physical Voter ID?","Can I use my Aadhaar card as ID to vote?","What is the minimum age to be eligible to vote?","Can NRIs (Non-Resident Indians) vote?","Can a non-citizen of India vote?","How do I find my assigned polling booth?","What are the standard voting hours on polling day?","What is the process inside the polling station?","What is the 'Indelible Ink' and why is it used?","What is an EVM and how does it work?","What is VVPAT and how does it verify my vote?","How do I confirm my vote went to the right candidate on the EVM?","What happens if the EVM malfunctions during voting?","What is NOTA (None Of The Above)?","How can government employees on election duty vote?","What is a 'Tendered Vote'?","What is a 'Challenged Vote'?","Is there a facility for senior citizens to vote from home?","How are the votes counted and results declared?","Where can I find real-time results on counting day?"
 ];
