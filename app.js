@@ -8,6 +8,9 @@ let isTyping = false;
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
+// Global translations object
+window.translations = window.translations || {};
+
 // Auth State Listener
 auth.onAuthStateChanged(user => {
     const authSection = document.getElementById('auth-section');
@@ -50,7 +53,6 @@ const commonQuestions = [
 "How do I register as a new voter in India?","What is Form 6 and when is it used?","How to track my Voter ID application status?","What is the deadline for registration before an election?","How to fill Form 8 for correction of details?","What is Form 7 and who should fill it?","What is an EPIC number and where can I find it?","I lost my Voter ID card. How do I get a duplicate one?","How can I download my e-EPIC (digital voter card)?","Can I have more than one Voter ID card?","What IDs are valid for voting if I don't have a physical Voter ID?","Can I use my Aadhaar card as ID to vote?","What is the minimum age to be eligible to vote?","Can NRIs (Non-Resident Indians) vote?","Can a non-citizen of India vote?","How do I find my assigned polling booth?","What are the standard voting hours on polling day?","What is the process inside the polling station?","What is the 'Indelible Ink' and why is it used?","What is an EVM and how does it work?","What is VVPAT and how does it verify my vote?","How do I confirm my vote went to the right candidate on the EVM?","What happens if the EVM malfunctions during voting?","What is NOTA (None Of The Above)?","How can government employees on election duty vote?","What is a 'Tendered Vote'?","What is a 'Challenged Vote'?","Is there a facility for senior citizens to vote from home?","How are the votes counted and results declared?","Where can I find real-time results on counting day?"
 ];
 
-window.translations = window.translations || {};
 translations.english = {
 heroTitle: "Every Vote <span class='text-[#FF9933]'>Counts.</span>",
 heroDesc: "Understanding the world's largest democratic exercise. Follow our roadmap or chat with our assistant for ECI guidelines.",
@@ -63,8 +65,18 @@ inputPlaceholder: "Ask about EVMs, Voter IDs, or registration...",
 botGreeting: "Namaste! I'm your Indian Election Assistant. How can I help you today?",
 helplineBtn: "Helpline 1950",
 helpModal: {title:"Election Helpline",subtitle:"Official ECI Contact Information",natTitle:"National Voter Helpline",natDesc:"Toll-free. Established by the Election Commission of India (ECI) for queries, registration status, and grievances.",natTip:"<strong>Tip:</strong> If calling from a mobile, prefix with your state capital STD code (e.g., <strong>044-1950</strong> for Tamil Nadu).",contactTitle:"Contact Centre",contactDesc:"Daily 8:00 AM - 8:00 PM Multi-language support",localTitle:"Local Support (Chennai)",localDesc:"District Election Control Room Toll-Free",digitalTitle:"Digital Self-Service",voterApp:"Voter Helpline App",footer:"Ready for 2026 Tamil Nadu Legislative Assembly Election"},
-faqLabels: commonQuestions
+faqLabels: commonQuestions,
+guestError: "I'm currently in guest mode. For AI-powered answers, please ensure the API key is configured. In the meantime, you can select questions from the FAQ dropdown! 🇮🇳",
+apiError: "I'm having trouble connecting to the AI. Please try again or use the FAQ dropdown below! 🌐"
 };
+
+// Add localized errors to other languages
+translations.hindi.guestError = "मैं अभी गेस्ट मोड में हूं। एआई-संचालित उत्तरों के लिए, कृपया सुनिश्चित करें कि एपीआई कुंजी कॉन्फ़िगर की गई है। इस बीच, आप नीचे दिए गए ड्रॉपडाउन से प्रश्न चुन सकते हैं! 🇮🇳";
+translations.hindi.apiError = "मुझे एआई से जुड़ने में समस्या हो रही है। कृपया पुनः प्रयास करें या नीचे दिए गए ड्रॉपडाउन का उपयोग करें! 🌐";
+translations.tamil.guestError = "நான் தற்போது விருந்தினர் முறையில் உள்ளேன். AI பதில்களுக்கு, API விசை உள்ளமைக்கப்பட்டுள்ளதை உறுதிப்படுத்தவும். இதற்கிடையில், நீங்கள் FAQ டிராப்டவுனில் இருந்து கேள்விகளைத் தேர்ந்தெடுக்கலாம்! 🇮🇳";
+translations.tamil.apiError = "AI உடன் இணைப்பதில் எனக்கு சிக்கல் உள்ளது. தயவுசெய்து மீண்டும் முயற்சிக்கவும் அல்லது கீழே உள்ள டிராப்டவுனைப் பயன்படுத்தவும்! 🌐";
+translations.malayalam.guestError = "ഞാൻ ഇപ്പോൾ ഗസ്റ്റ് മോഡിലാണ്. AI ഉത്തരങ്ങൾക്കായി, API കീ കോൺഫിഗർ ചെയ്തിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുക. അതിനിടയിൽ, നിങ്ങൾക്ക് താഴെയുള്ള ലിസ്റ്റിൽ നിന്ന് ചോദ്യങ്ങൾ തിരഞ്ഞെടുക്കാം! 🇮🇳";
+translations.malayalam.apiError = "AI-യുമായി ബന്ധിപ്പിക്കുന്നതിൽ എനിക്ക് പ്രശ്നമുണ്ട്. ദയവായി വീണ്ടും ശ്രമിക്കുക അല്ലെങ്കിൽ താഴെയുള്ള ലിസ്റ്റ് ഉപയോഗിക്കുക! 🌐";
 
 function toggleSupport() {
     const modal = document.getElementById('support-modal');
@@ -163,7 +175,7 @@ async function sendMessage(overrideText) {
     if (!text || isTyping) return;
     if (!overrideText) input.value = "";
 
-    // If it's an English FAQ question (from Roadmap), translate the USER bubble too
+    // Localized USER bubble
     if (currentLang !== 'english') {
         const engIdx = commonQuestions.indexOf(text);
         if (engIdx !== -1) {
@@ -177,17 +189,16 @@ async function sendMessage(overrideText) {
 
     // Multi-language Local Answer Lookup
     let localAns = null;
-    if (window.FAQ_ANSWERS && FAQ_ANSWERS[currentLang] && FAQ_ANSWERS[currentLang][text]) {
+    if (window.FAQ_ANSWERS && FAQ_ANSWERS[currentLang]) {
         localAns = FAQ_ANSWERS[currentLang][text];
-    } else {
-        const engIdx = commonQuestions.indexOf(text);
-        if (engIdx !== -1) {
-            const transQ = translations[currentLang]?.faqLabels?.[engIdx];
-            if (transQ) {
-                localAns = FAQ_ANSWERS[currentLang][transQ] || FAQ_ANSWERS.english[commonQuestions[engIdx]];
-            } else {
-                localAns = FAQ_ANSWERS.english[commonQuestions[engIdx]];
-            }
+        
+        // Fallback: If text was originally English, check English KB
+        if (!localAns && overrideText) {
+             const engIdx = commonQuestions.indexOf(overrideText);
+             if (engIdx !== -1) {
+                 const transQ = translations[currentLang]?.faqLabels?.[engIdx];
+                 localAns = FAQ_ANSWERS[currentLang][transQ];
+             }
         }
     }
 
@@ -203,9 +214,10 @@ async function sendMessage(overrideText) {
         const resp = await callGemini(text); 
         addBotMessage(resp); 
     } catch (e) { 
-        let errorMsg = "I'm currently in guest mode. For AI-powered answers, please ensure the API key is configured. In the meantime, you can select questions from the FAQ dropdown! 🇮🇳";
+        const t = translations[currentLang];
+        let errorMsg = t.guestError || translations.english.guestError;
         if (e.message !== "API_KEY_MISSING") {
-            errorMsg = "I'm having trouble connecting to the AI. Please try again or use the FAQ dropdown below! 🌐";
+            errorMsg = t.apiError || translations.english.apiError;
         }
         addBotMessage(errorMsg); 
     } finally { 
