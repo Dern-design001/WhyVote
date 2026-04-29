@@ -159,9 +159,19 @@ function addUserMessage(text) {
 async function sendMessage(overrideText) {
     overrideText = overrideText || null;
     const input = document.getElementById('ai-input');
-    const text = overrideText || input.value.trim();
+    let text = overrideText || input.value.trim();
     if (!text || isTyping) return;
     if (!overrideText) input.value = "";
+
+    // If it's an English FAQ question (from Roadmap), translate the USER bubble too
+    if (currentLang !== 'english') {
+        const engIdx = commonQuestions.indexOf(text);
+        if (engIdx !== -1) {
+            const transQ = translations[currentLang]?.faqLabels?.[engIdx];
+            if (transQ) text = transQ; 
+        }
+    }
+
     addUserMessage(text);
     isTyping = true;
 
@@ -174,9 +184,9 @@ async function sendMessage(overrideText) {
         if (engIdx !== -1) {
             const transQ = translations[currentLang]?.faqLabels?.[engIdx];
             if (transQ) {
-                localAns = FAQ_ANSWERS[currentLang][transQ] || FAQ_ANSWERS.english[text];
+                localAns = FAQ_ANSWERS[currentLang][transQ] || FAQ_ANSWERS.english[commonQuestions[engIdx]];
             } else {
-                localAns = FAQ_ANSWERS.english[text];
+                localAns = FAQ_ANSWERS.english[commonQuestions[engIdx]];
             }
         }
     }
